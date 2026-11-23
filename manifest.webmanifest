@@ -1,14 +1,14 @@
 {
-  "name": "App do AT · ABLLS-R",
-  "short_name": "App do AT",
-  "description": "Registro de sessões de intervenção: tentativas, dicas, comportamentos e evolução diária.",
+  "name": "Entre Sessões · AT",
+  "short_name": "Entre Sessões",
+  "description": "Coleta de sessões de intervenção ABA para o acompanhante terapêutico.",
   "lang": "pt-BR",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f141c",
-  "theme_color": "#0f766e",
+  "background_color": "#F4F3EE",
+  "theme_color": "#F4F3EE",
   "icons": [
     { "src": "icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
   ]
