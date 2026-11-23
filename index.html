@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4fb3bb">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>App do AT · ABLLS-R</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone.svg" type="image/svg+xml">
+<style>
+:root { color-scheme: light; --bg:#eef2f4; --p:#fff; --p2:#f3f6f8; --tx:#1d2733; --mu:#6b7684; --ln:#dde3e8; --cab:#4fb3bb; --cab2:#3a9aa2; --ac:#2f8f97; --ok:#1f9d6b; --aj:#e0a100; --er:#d64545; --sel:#2a9aa3; }
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body { margin:0; background:var(--bg); color:var(--tx); font:16px/1.42 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+button,input,textarea,select { font:inherit; color:inherit; }
+button { cursor:pointer; }
+.cab { position:sticky; top:0; z-index:20; background:var(--cab); color:#fff; padding:calc(10px + env(safe-area-inset-top)) 12px 0; box-shadow:0 2px 6px rgba(0,0,0,.12); }
+.cab .l1 { display:flex; align-items:center; gap:8px; min-height:44px; padding-bottom:8px; }
+.cab h1 { flex:1; margin:0; font-size:19px; text-align:center; font-weight:650; line-height:1.15; }
+.cab h1 small { display:block; font-size:12px; font-weight:500; opacity:.9; }
+.ic { width:40px; height:40px; border:0; border-radius:50%; background:rgba(255,255,255,.18); color:#fff; font-size:20px; display:grid; place-items:center; flex:none; }
+.ic.vazio { background:none; }
+.tabs { display:flex; }
+.tabs button { flex:1; border:0; background:none; color:#fff; opacity:.8; padding:10px 0 9px; font-weight:600; border-bottom:3px solid transparent; }
+.tabs button.on { opacity:1; border-bottom-color:#fff; }
+main { max-width:640px; margin:0 auto; padding:0 0 calc(96px + env(safe-area-inset-bottom)); }
+.pad { padding:12px; }
+.item { display:flex; gap:12px; align-items:center; width:100%; text-align:left; background:var(--p); border:0; border-bottom:1px solid var(--ln); padding:14px 14px; }
+.item .av { width:40px; height:40px; border-radius:50%; background:#cfd6dc; color:#fff; display:grid; place-items:center; font-weight:800; flex:none; }
+.item .tx { flex:1; min-width:0; }
+.item b { display:block; font-size:16px; }
+.item small { color:var(--mu); font-size:12.5px; }
+.st { width:30px; height:30px; border-radius:50%; display:grid; place-items:center; font-size:15px; font-weight:800; flex:none; }
+.card { background:var(--p); border-radius:14px; padding:14px; margin:0 12px 12px; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.card h2 { font-size:16px; margin:0 0 8px; }
+.mu { color:var(--mu); font-size:13.5px; }
+.btn { border:1px solid var(--ln); background:var(--p); border-radius:12px; padding:12px 14px; font-weight:650; font-size:15px; }
+.btn.pri { background:var(--ac); color:#fff; border-color:var(--ac); }
+.btn.perigo { color:var(--er); border-color:var(--er); }
+.btn.bloco { display:block; width:100%; text-align:center; margin-top:10px; }
+.btn.peq { padding:7px 11px; font-size:13.5px; border-radius:10px; }
+input[type=text], textarea { width:100%; border:1px solid var(--ln); background:var(--p2); border-radius:12px; padding:11px 12px; }
+textarea { min-height:110px; resize:vertical; }
+label.cp { display:block; margin:12px 0 5px; font-weight:650; font-size:14px; }
+.chip { display:inline-block; font-size:12px; font-weight:700; padding:2px 9px; border-radius:20px; background:var(--p2); color:var(--mu); }
+.vazio { text-align:center; padding:30px 16px; color:var(--mu); }
+.aviso { margin:12px; border-radius:12px; background:#fff4d6; color:#6b4b00; padding:10px 12px; font-size:13.5px; }
+/* sessão */
+.tiles { display:flex; gap:8px; overflow-x:auto; padding:10px 12px; scrollbar-width:none; background:var(--bg); position:sticky; top:var(--cabh,64px); z-index:15; }
+.tiles::-webkit-scrollbar { display:none; }
+.tile { flex:none; width:128px; min-height:74px; border:0; border-radius:12px; background:var(--p); text-align:left; padding:9px 10px; box-shadow:0 1px 3px rgba(0,0,0,.08); display:flex; flex-direction:column; justify-content:space-between; }
+.tile b { font-size:13px; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.tile span { font-size:13px; font-weight:800; color:var(--mu); }
+.tile.on { background:var(--sel); color:#fff; } .tile.on span { color:#fff; }
+.alvo { background:var(--p); border-radius:14px; margin:0 12px 10px; box-shadow:0 1px 3px rgba(0,0,0,.07); overflow:hidden; }
+.alvo-cab { display:flex; gap:10px; width:100%; border:0; background:none; text-align:left; padding:13px 14px; align-items:flex-start; }
+.alvo.on .alvo-cab { background:var(--sel); color:#fff; }
+.alvo-cab .tx { flex:1; }
+.alvo-cab b { display:block; font-size:16px; }
+.alvo-cab small { display:block; font-size:12.5px; opacity:.85; line-height:1.4; }
+.alvo-cab .pct { font-weight:800; font-size:14px; text-align:right; }
+.botoes { display:flex; gap:8px; padding:12px 14px 4px; }
+.bt { flex:1; height:60px; border:0; border-radius:12px; font-weight:800; font-size:19px; color:#fff; box-shadow:0 2px 0 rgba(0,0,0,.15); }
+.bt:active { transform:translateY(1px); filter:brightness(.92); }
+.bt.mais { background:var(--ok); font-size:28px; } .bt.menos { background:var(--er); font-size:28px; } .bt.dica { background:var(--aj); }
+.mais-dicas { display:flex; gap:6px; flex-wrap:wrap; padding:6px 14px 0; }
+.mais-dicas button { border:1px solid var(--aj); color:#7a5800; background:#fff8e1; border-radius:10px; padding:7px 10px; font-weight:700; font-size:13.5px; }
+.tents { display:flex; gap:4px; flex-wrap:wrap; padding:10px 14px 4px; }
+.tent { font-size:11.5px; font-weight:800; color:#fff; border-radius:6px; padding:3px 6px; min-width:28px; text-align:center; }
+.rod-alvo { display:flex; align-items:center; gap:8px; padding:6px 14px 12px; font-size:13px; color:var(--mu); }
+.rod-alvo .esp { flex:1; }
+.lnk { border:0; background:none; color:var(--ac); font-weight:700; font-size:13.5px; padding:4px; }
+.crono-lin { display:flex; gap:8px; align-items:center; padding:6px 14px; }
+.crono-lin .hr { flex:1; border-radius:10px; padding:8px 10px; font-weight:700; color:#fff; text-align:center; }
+.crono-tot { font-size:30px; font-weight:800; text-align:center; font-variant-numeric:tabular-nums; padding:6px 0; }
+.cont { display:flex; align-items:center; justify-content:center; gap:18px; padding:10px; }
+.cont .n { font-size:40px; font-weight:800; min-width:70px; text-align:center; }
+.cont button { width:64px; height:64px; border-radius:50%; border:0; font-size:28px; font-weight:800; color:#fff; }
+.barra-inf { position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--p); border-top:1px solid var(--ln); padding:6px 6px calc(6px + env(safe-area-inset-bottom)); }
+.barra-inf .in { max-width:640px; margin:0 auto; display:flex; }
+.barra-inf button { flex:1; border:0; background:none; padding:6px 2px; font-size:11.5px; font-weight:650; color:var(--mu); display:flex; flex-direction:column; align-items:center; gap:2px; }
+.barra-inf button i { font-style:normal; font-size:22px; line-height:1; }
+.barra-inf button.fim { color:var(--ac); }
+.folha-fundo { position:fixed; inset:0; background:rgba(10,20,30,.45); z-index:40; display:flex; align-items:flex-end; }
+.folha { background:var(--p); width:100%; max-width:640px; margin:0 auto; border-radius:18px 18px 0 0; max-height:88vh; overflow:auto; padding:16px 16px calc(18px + env(safe-area-inset-bottom)); }
+.folha h3 { margin:0 0 6px; font-size:18px; }
+.chips { display:flex; gap:7px; flex-wrap:wrap; }
+.chips button { border:1px solid var(--ln); background:var(--p2); border-radius:20px; padding:9px 13px; font-weight:600; }
+.chips button.on { background:var(--ac); color:#fff; border-color:var(--ac); }
+.eng { display:flex; gap:6px; } .eng button { flex:1; border:1px solid var(--ln); background:var(--p2); border-radius:12px; padding:11px 0; font-weight:800; }
+.eng button.on { background:var(--ac); color:#fff; border-color:var(--ac); }
+.reg { font-size:13.5px; border-top:1px solid var(--ln); padding:8px 0; }
+.toast { position:fixed; left:50%; bottom:100px; transform:translateX(-50%); background:#1d2733; color:#fff; padding:10px 18px; border-radius:30px; font-size:14.5px; z-index:60; max-width:90vw; text-align:center; }
+details summary { cursor:pointer; color:var(--ac); font-weight:650; font-size:14px; margin:6px 0; }
+</style>
+</head>
+<body>
+<header class="cab" id="cab"></header>
+<main id="app"></main>
+<input type="file" id="arq" accept=".json,application/json,text/plain,*/*" hidden>
+<script>
+(function () {
+  'use strict';
+  const K = 'ablls_at_v2';
+  const DICAS_PADRAO = [{ k: 'AFT', n: 'Ajuda física total', nv: 5 }, { k: 'AFP', n: 'Ajuda física parcial', nv: 4 }, { k: 'AM', n: 'Ajuda por modelo', nv: 3 }, { k: 'AG', n: 'Ajuda gestual', nv: 2 }, { k: 'AV', n: 'Ajuda verbal', nv: 1 }, { k: 'I', n: 'Independente', nv: 0 }];
+  const FASE = { linha_base: 'LINHA DE BASE', intervencao: 'INTERVENÇÃO', manutencao: 'MANUTENÇÃO', generalizacao: 'GENERALIZAÇÃO' };
+  const STATUS = { em_andamento: ['Em andamento', '#e0a100', '▶'], pausada: ['Pausada', '#f08a24', 'Ⅱ'], cancelada: ['Cancelada', '#d64545', '✕'], finalizada: ['Não enviada', '#e0a100', '!'], enviada: ['Enviada', '#3b82f6', '➤'] };
+  const cab = document.getElementById('cab'), app = document.getElementById('app');
+  const ui = { aba: 'pacientes', prog: '', aberto: null, maisDicas: null, folha: null, compSel: null };
+  let S;
+
+  /* ------------ dados ------------ */
+  function carregar() { try { S = JSON.parse(localStorage.getItem(K) || 'null'); } catch (e) { S = null; } S = S || { at: { nome: '' }, pacotes: {}, sessoes: [] }; }
+  function salvar() { try { localStorage.setItem(K, JSON.stringify(S)); } catch (e) { toast('ERRO: memória cheia. Envie os registros agora.'); } }
+  carregar(); try { navigator.storage && navigator.storage.persist && navigator.storage.persist(); } catch (e) {}
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const p2 = n => String(n).padStart(2, '0');
+  const hoje = () => { const d = new Date(); return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); };
+  const hora = (ms) => { const d = ms ? new Date(ms) : new Date(); return p2(d.getHours()) + ':' + p2(d.getMinutes()) + (ms ? ':' + p2(d.getSeconds()) : ''); };
+  const fmtData = iso => iso ? iso.slice(0, 10).split('-').reverse().join('/') : '';
+  const fmtDH = iso => { if (!iso) return ''; const d = new Date(iso); return fmtData(iso.slice(0, 10)) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()); };
+  const hms = s => { s = Math.floor(s); return p2(Math.floor(s / 3600)) + ':' + p2(Math.floor(s % 3600 / 60)) + ':' + p2(s % 60); };
+  function toast(m) { const t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(() => t.remove(), 2800); }
+  const vib = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+  const pacote = pid => S.pacotes[pid];
+  const sessao = sid => S.sessoes.find(s => s.id === sid);
+  const statusVis = s => (s.status === 'finalizada' || s.status === 'cancelada') && s.exportadoEm && s.exportadoEm >= s.atualizadoEm ? 'enviada' : s.status;
+  const pendentes = () => S.sessoes.filter(s => (s.status === 'finalizada' || s.status === 'cancelada') && (!s.exportadoEm || s.atualizadoEm > s.exportadoEm));
+  const abertaDo = pid => S.sessoes.find(s => s.pacienteId === pid && (s.status === 'em_andamento' || s.status === 'pausada'));
+  function tocar(s) { s.atualizadoEm = new Date().toISOString(); salvar(); }
+  const iniciais = n => String(n || '?').split(/\s+/).filter(Boolean).map(x => x[0]).join('').slice(0, 2).toUpperCase();
+  function regAlvo(s, prog, al) { return s.alvos[al.id] || (s.alvos[al.id] = { progId: prog.id, fase: al.fase, dica: al.dica, tentativas: [] }); }
+  function regProg(s, prog) { return s.progs[prog.id] || (s.progs[prog.id] = { contagem: 0, duracaoSeg: 0, intervalos: [], cronoIni: null, obs: '' }); }
+  function resumo(t) { const n = t.length, i = t.filter(x => x.r === '+').length, e = t.filter(x => x.r === '-').length; return { n, i, e, a: n - i - e, pI: n ? Math.round(i / n * 100) : null }; }
+  const corR = r => r === '+' ? 'var(--ok)' : r === '-' ? 'var(--er)' : 'var(--aj)';
+  const durProg = r => r.duracaoSeg + (r.cronoIni ? (Date.now() - r.cronoIni) / 1000 : 0);
+
+  /* ------------ rotas ------------ */
+  const rota = () => location.hash.replace(/^#\/?/, '').split('/');
+  const ir = h => { if (location.hash === '#/' + h) render(); else location.hash = '#/' + h; };
+  window.addEventListener('hashchange', () => { ui.folha = null; render(); });
+  function cabecalho(titulo, sub, esq, dir, tabs) {
+    cab.innerHTML = `<div class="l1">${esq || '<span class="ic vazio"></span>'}<h1>${titulo}${sub ? `<small>${sub}</small>` : ''}</h1>${dir || '<span class="ic vazio"></span>'}</div>${tabs || ''}`;
+    document.documentElement.style.setProperty('--cabh', cab.offsetHeight + 'px');
+  }
+
+  /* ------------ início: pacientes / sessões ------------ */
+  function inicio() {
+    const pend = pendentes().length;
+    cabecalho(ui.aba === 'pacientes' ? 'Pacientes' : 'Sessões', S.at.nome ? 'AT: ' + esc(S.at.nome) : '', `<button class="ic" data-a="menu" aria-label="Menu">☰</button>`, `<button class="ic" data-a="enviar" aria-label="Enviar registros" title="Enviar registros">➤</button>`,
+      `<div class="tabs"><button class="${ui.aba === 'pacientes' ? 'on' : ''}" data-a="aba" data-v="pacientes">Pacientes</button><button class="${ui.aba === 'sessoes' ? 'on' : ''}" data-a="aba" data-v="sessoes">Sessões${pend ? ' (' + pend + ')' : ''}</button></div>`);
+    let h = '';
+    if (!S.at.nome) h += `<div class="card" style="margin-top:12px"><h2>Bem-vindo(a)!</h2><div class="mu">Informe seu nome. Ele aparece em cada sessão que você registrar.</div><input type="text" id="nome-at" placeholder="Seu nome" style="margin-top:10px"><button class="btn pri bloco" data-a="salvar-nome">Salvar</button></div>`;
+    if (pend) h += `<div class="aviso"><b>${pend} sessão(ões) não enviada(s).</b> Os registros ficam só neste celular até você enviar. Toque em ➤ no topo.</div>`;
+    if (ui.aba === 'pacientes') {
+      const ps = Object.values(S.pacotes).sort((a, b) => (a.paciente.nome || '').localeCompare(b.paciente.nome || ''));
+      h += ps.map(p => { const ab = abertaDo(p.pacienteId); return `<button class="item" data-a="ir" data-h="p/${p.pacienteId}"><span class="av">${esc(iniciais(p.paciente.nome))}</span><span class="tx"><b>${esc(p.paciente.nome)}</b><small>Último pacote: ${fmtDH(p.geradoEm)}${ab ? ' · <span style="color:#e0a100;font-weight:700">' + (ab.status === 'pausada' ? 'sessão pausada' : 'sessão em andamento') + '</span>' : ''}</small></span>›</button>`; }).join('')
+        || `<div class="vazio"><b>Nenhum paciente.</b><br>Abra o pacote (.json) que o supervisor enviou.</div>`;
+      h += `<div class="pad"><button class="btn pri bloco" data-a="carregar">Abrir pacote do paciente</button></div>`;
+    } else {
+      const lista = S.sessoes.slice().sort((a, b) => (b.data + b.inicio).localeCompare(a.data + a.inicio));
+      h += lista.map(s => { const p = pacote(s.pacienteId); const st = STATUS[statusVis(s)]; const destino = (s.status === 'em_andamento' || s.status === 'pausada') ? 's/' + s.id : 'v/' + s.id;
+        return `<button class="item" data-a="ir" data-h="${destino}"><span class="st" style="color:${st[1]};border:2px solid ${st[1]}">${st[2]}</span><span class="tx"><b>${esc(p ? p.paciente.nome : '(paciente removido)')}</b><small>Data: ${fmtData(s.data)} ${s.inicio}${s.fim ? ' – ' + s.fim : ''}<br><span style="color:${st[1]};font-weight:700">Status: ${st[0]}</span></small></span>›</button>`; }).join('')
+        || '<div class="vazio">Nenhuma sessão registrada.</div>';
+      if (pend) h += `<div class="pad"><button class="btn pri bloco" data-a="enviar">Enviar ${pend} sessão(ões) ao supervisor</button></div>`;
+    }
+    return h;
+  }
+
+  /* ------------ paciente ------------ */
+  function pagPaciente(pid) {
+    const p = pacote(pid); if (!p) { ir(''); return null; }
+    cabecalho(esc(p.paciente.nome), 'Supervisão: ' + esc((p.supervisor && p.supervisor.nome) || ''), `<button class="ic" data-a="ir" data-h="" aria-label="Voltar">‹</button>`);
+    const ab = abertaDo(pid);
+    const ses = S.sessoes.filter(s => s.pacienteId === pid).sort((a, b) => (b.data + b.inicio).localeCompare(a.data + a.inicio)).slice(0, 8);
+    let h = `<div class="pad">${ab ? `<button class="btn pri bloco" style="margin-top:0" data-a="retomar" data-s="${ab.id}">${ab.status === 'pausada' ? 'Ⅱ Retomar sessão pausada' : '▶ Continuar sessão'} (${fmtData(ab.data)} ${ab.inicio})</button>` : `<button class="btn pri bloco" style="margin-top:0" data-a="nova" data-p="${pid}">▶ Iniciar sessão</button>`}</div>`;
+    h += `<div class="card"><h2>Últimas sessões</h2>${ses.length ? ses.map(s => { const st = STATUS[statusVis(s)]; return `<div class="reg" data-a="ir" data-h="${(s.status === 'em_andamento' || s.status === 'pausada') ? 's' : 'v'}/${s.id}" style="cursor:pointer"><b>${fmtData(s.data)}</b> ${s.inicio}${s.fim ? '–' + s.fim : ''} · <span style="color:${st[1]};font-weight:700">${st[0]}</span></div>`; }).join('') : '<div class="mu">Nenhuma ainda.</div>'}</div>`;
+    const ativos = p.programas;
+    h += `<div class="card"><h2>Programas (${ativos.length})</h2>${ativos.map(x => `<details><summary>${x.codigo ? esc(x.codigo) + ' · ' : ''}${esc(x.nome)}</summary><div class="mu" style="white-space:pre-wrap">${esc(x.pasta || '')}\n\n<b>Objetivo:</b> ${esc(x.objetivo)}\n\n<b>Como aplicar:</b> ${esc(x.procedimento)}${x.tentativas ? '\n\n<b>Tentativas por sessão:</b> ' + x.tentativas : ''}\n\n<b>Alvos:</b> ${x.alvos.map(a => esc(a.nome) + ' (' + (FASE[a.fase] || '') + (x.tipo === 'tentativas' ? ', critério ' + a.dica : '') + ')').join('; ')}</div></details>`).join('')}
+      ${(p.comportamentos || []).length ? `<details><summary>Comportamentos-alvo (ABC)</summary><div class="mu">${p.comportamentos.map(c => `<p><b>${esc(c.nome)}:</b> ${esc(c.definicao)}</p>`).join('')}</div></details>` : ''}
+      ${p.orientacoes ? `<details><summary>Orientações do supervisor</summary><div class="mu" style="white-space:pre-wrap">${esc(p.orientacoes)}</div></details>` : ''}
+      <details><summary>Legenda das dicas</summary><div class="mu"><b style="color:var(--ok)">+</b> independente · <b style="color:var(--er)">−</b> erro / sem resposta · ${(p.dicas || DICAS_PADRAO).filter(d => d.k !== 'I').map(d => `<b>${d.k}</b> ${esc(d.n)}`).join(' · ')}</div></details></div>`;
+    h += `<div class="pad"><button class="btn perigo peq" data-a="remover-pac" data-p="${pid}">Remover paciente deste celular</button></div>`;
+    return h;
+  }
+
+  /* ------------ sessão ------------ */
+  function botoesAlvo(prog, al, pid) {
+    const dicas = (pacote(pid).dicas || DICAS_PADRAO);
+    const lista = [];
+    if (al.fase === 'intervencao' && al.dica && al.dica !== 'I') { if (al.dica !== 'AFT') lista.push('AFT'); lista.push(al.dica); }
+    else if (al.dica && al.dica !== 'I' && al.fase !== 'linha_base') lista.push(al.dica);
+    let h = `<div class="botoes"><button class="bt menos" data-a="t" data-p="${prog.id}" data-al="${al.id}" data-r="-" aria-label="Erro">−</button>${lista.map(k => `<button class="bt dica" data-a="t" data-p="${prog.id}" data-al="${al.id}" data-r="${k}">${k}</button>`).join('')}<button class="bt mais" data-a="t" data-p="${prog.id}" data-al="${al.id}" data-r="+" aria-label="Independente">+</button></div>`;
+    if (ui.maisDicas === al.id) h += `<div class="mais-dicas">${dicas.filter(d => d.k !== 'I' && !lista.includes(d.k)).map(d => `<button data-a="t" data-p="${prog.id}" data-al="${al.id}" data-r="${d.k}">${d.k} · ${esc(d.n)}</button>`).join('')}</div>`;
+    return h;
+  }
+  function cardAlvo(s, prog, al) {
+    const r = s.alvos[al.id]; const t = r ? r.tentativas : []; const z = resumo(t); const aberto = ui.aberto === al.id;
+    const ult = t.length ? t[t.length - 1].r : '';
+    let corpo = '';
+    if (aberto) {
+      corpo = botoesAlvo(prog, al, s.pacienteId) +
+        `<div class="tents">${t.map((x, i) => `<span class="tent" style="background:${corR(x.r)}">${i + 1}·${x.r === '-' ? '−' : x.r}</span>`).join('') || '<span class="mu">Nenhuma tentativa.</span>'}</div>
+         <div class="rod-alvo"><span>${z.n}${prog.tentativas ? '/' + prog.tentativas : ''} tentativas${z.n ? ' · ' + z.pI + '% indep.' : ''}</span><span class="esp"></span><button class="lnk" data-a="mais-dicas" data-al="${al.id}">${ui.maisDicas === al.id ? 'menos dicas' : 'outras dicas'}</button>${z.n ? `<button class="lnk" data-a="desfazer" data-al="${al.id}">↶ desfazer</button>` : ''}</div>`;
+    }
+    return `<div class="alvo${aberto ? ' on' : ''}" id="al-${al.id}"><button class="alvo-cab" data-a="abrir" data-al="${al.id}"><span class="tx"><b>${esc(al.nome)}</b><small>${al.nome !== prog.nome ? esc(prog.nome) + '<br>' : ''}${FASE[al.fase] || ''}${al.fase !== 'linha_base' ? '<br>Critério atual: ' + esc(al.dica === 'I' ? 'independente' : al.dica) : ''}${ult ? '<br>Selecionado: ' + (ult === '+' ? 'independente' : ult === '-' ? 'erro' : ult) : ''}</small></span><span class="pct">${z.n ? z.pI + '%' : ''}<br>${aberto ? '︿' : '﹀'}</span></button>${aberto ? corpo : ''}</div>`;
+  }
+  function cardTempo(s, prog) {
+    const r = s.progs[prog.id] || { intervalos: [], duracaoSeg: 0, cronoIni: null };
+    const lin = r.intervalos.map(iv => `<div class="crono-lin"><span class="hr" style="background:var(--ac)">▶ ${hora(iv.ini)}</span><span class="hr" style="background:#64748b">■ ${hora(iv.fim)}</span></div>`).join('');
+    return `<div class="alvo"><div class="alvo-cab" style="cursor:default"><span class="tx"><b>${esc(prog.nome)}</b><small>${FASE[(prog.alvos[0] || {}).fase] || 'INTERVENÇÃO'} · Duração: <span data-dur="${prog.id}">${hms(durProg(r))}</span></small></span></div>
+      ${lin}${r.cronoIni ? `<div class="crono-lin"><span class="hr" style="background:var(--ac)">▶ ${hora(r.cronoIni)}</span><button class="btn" style="flex:1;background:#64748b;color:#fff;border:0" data-a="crono" data-p="${prog.id}">■ Parar</button></div>` : `<div class="pad" style="padding-top:4px"><button class="btn pri bloco" style="margin-top:0" data-a="crono" data-p="${prog.id}">▶ Iniciar</button></div>`}</div>`;
+  }
+  function cardFreq(s, prog) {
+    const r = s.progs[prog.id] || { contagem: 0 };
+    return `<div class="alvo"><div class="alvo-cab" style="cursor:default"><span class="tx"><b>${esc(prog.nome)}</b><small>Contagem de ocorrências</small></span></div><div class="cont"><button style="background:#94a3b8" data-a="cont" data-p="${prog.id}" data-d="-1">−</button><span class="n">${r.contagem}</span><button style="background:var(--ok)" data-a="cont" data-p="${prog.id}" data-d="1">+</button></div></div>`;
+  }
+  function pagSessao(sid) {
+    const s = sessao(sid); if (!s) { ir(''); return null; }
+    if (s.status !== 'em_andamento') { ir((s.status === 'pausada' ? 'p/' + s.pacienteId : 'v/' + sid)); return null; }
+    const p = pacote(s.pacienteId);
+    cabecalho(esc(p.paciente.nome), 'Sessão iniciada às ' + s.inicio, `<button class="ic" data-a="ir" data-h="p/${s.pacienteId}" aria-label="Voltar">‹</button>`, `<button class="ic" data-a="folha" data-f="encerrar" aria-label="Encerrar">✓</button>`);
+    const progs = p.programas;
+    const pctProg = x => { let t = []; x.alvos.forEach(a => { if (s.alvos[a.id]) t = t.concat(s.alvos[a.id].tentativas); }); const z = resumo(t); return x.tipo === 'tentativas' ? (z.n ? z.pI + '%' : '—') : x.tipo === 'duracao' ? (s.progs[x.id] ? hms(durProg(s.progs[x.id])).slice(3) : '—') : (s.progs[x.id] ? s.progs[x.id].contagem + 'x' : '—'); };
+    let h = `<div class="tiles"><button class="tile${!ui.prog ? ' on' : ''}" data-a="prog" data-p=""><b>Todos os programas</b><span>${progs.length}</span></button>${progs.map(x => `<button class="tile${ui.prog === x.id ? ' on' : ''}" data-a="prog" data-p="${x.id}"><b>${esc(x.nome)}</b><span>${pctProg(x)}</span></button>`).join('')}</div>`;
+    progs.filter(x => !ui.prog || ui.prog === x.id).forEach(x => {
+      if (x.tipo === 'duracao') h += cardTempo(s, x);
+      else if (x.tipo === 'frequencia') h += cardFreq(s, x);
+      else h += x.alvos.map(a => cardAlvo(s, x, a)).join('');
+    });
+    const nC = s.comportamentos.length, nR = s.reforcadores.reduce((a, r) => a + r.n, 0);
+    h += `<div class="barra-inf"><div class="in"><button data-a="folha" data-f="comp"><i>⚠️</i>Comportamento${nC ? ' (' + nC + ')' : ''}</button><button data-a="folha" data-f="ref"><i>⭐</i>Reforçador${nR ? ' (' + nR + ')' : ''}</button><button data-a="folha" data-f="evol"><i>📝</i>Evolução${s.evolucao.trim() ? ' ✓' : ''}</button><button class="fim" data-a="folha" data-f="encerrar"><i>✅</i>Encerrar</button></div></div>`;
+    return h;
+  }
+  function folhaHTML(s) {
+    const p = pacote(s.pacienteId); const f = ui.folha;
+    if (f === 'comp') {
+      const comps = p.comportamentos || [];
+      return `<h3>Comportamento inadequado</h3><div class="mu">Registre cada ocorrência. A-B-C ajuda a entender a função.</div>
+        <label class="cp">Qual comportamento?</label><div class="chips">${comps.map(c => `<button class="${ui.compSel === c.id ? 'on' : ''}" data-a="comp-sel" data-c="${c.id}">${esc(c.nome)}</button>`).join('')}<button class="${ui.compSel === 'outro' ? 'on' : ''}" data-a="comp-sel" data-c="outro">Outro</button></div>
+        ${ui.compSel === 'outro' ? '<input type="text" id="c-nome" placeholder="Nome do comportamento" style="margin-top:8px">' : ''}
+        <label class="cp">A — Antecedente (o que aconteceu antes)</label><input type="text" id="c-a">
+        <label class="cp">B — Comportamento (o que a criança fez)</label><input type="text" id="c-b">
+        <label class="cp">C — Consequência (o que aconteceu depois)</label><input type="text" id="c-c">
+        <label class="cp">Intensidade</label><div class="eng" id="c-int">${[1, 2, 3].map(n => `<button data-a="int" data-n="${n}">${['leve', 'moderada', 'intensa'][n - 1]}</button>`).join('')}</div>
+        <button class="btn pri bloco" data-a="comp-salvar">Registrar ocorrência</button>
+        ${s.comportamentos.slice().reverse().map(c => `<div class="reg"><b>${c.h} · ${esc(c.nome)}</b>${c.a ? '<br>A: ' + esc(c.a) : ''}${c.b ? '<br>B: ' + esc(c.b) : ''}${c.c ? '<br>C: ' + esc(c.c) : ''} <button class="lnk" data-a="comp-del" data-id="${c.id}">excluir</button></div>`).join('')}`;
+    }
+    if (f === 'ref') {
+      const lista = [...new Set((p.reforcadores || []).concat(s.reforcadores.map(r => r.nome)))];
+      return `<h3>Reforçadores</h3><div class="mu">Toque para somar cada vez que usar.</div><div class="chips" style="margin-top:10px">${lista.map(n => { const r = s.reforcadores.find(x => x.nome === n); return `<button class="${r ? 'on' : ''}" data-a="ref" data-n="${esc(n)}">${esc(n)}${r ? ' · ' + r.n : ''}</button>`; }).join('')}</div>
+        <div style="display:flex;gap:8px;margin-top:12px"><input type="text" id="r-novo" placeholder="Outro reforçador"><button class="btn" data-a="ref-novo">+</button></div>
+        ${s.reforcadores.length ? '<button class="lnk" data-a="ref-zerar" style="margin-top:10px">zerar reforçadores desta sessão</button>' : ''}<button class="btn pri bloco" data-a="fechar">Pronto</button>`;
+    }
+    if (f === 'evol') {
+      return `<h3>Evolução diária</h3><div class="mu">Relato da sessão para o prontuário.</div>
+        <label class="cp">Engajamento</label><div class="eng">${[1, 2, 3, 4, 5].map(n => `<button class="${s.engajamento === n ? 'on' : ''}" data-a="eng" data-n="${n}">${n}</button>`).join('')}</div><div class="mu" style="margin-top:4px">1 muito baixo · 5 muito alto</div>
+        <label class="cp">Local</label><input type="text" data-b="local" value="${esc(s.local)}" placeholder="Casa, escola, clínica…">
+        <label class="cp">Intercorrências</label><input type="text" data-b="intercorrencias" value="${esc(s.intercorrencias)}" placeholder="Saúde, sono, mudança na rotina…">
+        <label class="cp">Evolução / relato</label><textarea data-b="evolucao" style="min-height:170px" placeholder="Como chegou, o que foi trabalhado, respostas, comportamentos, o que funcionou…">${esc(s.evolucao)}</textarea>
+        <button class="btn pri bloco" data-a="fechar">Salvar</button>`;
+    }
+    if (f === 'encerrar') {
+      return `<h3>Encerrar sessão</h3>${!s.evolucao.trim() ? '<div class="aviso" style="margin:8px 0">A evolução do dia ainda está vazia.</div>' : ''}
+        <button class="btn pri bloco" data-a="finalizar">✓ Finalizar sessão</button>
+        <button class="btn bloco" data-a="pausar">Ⅱ Pausar (continuar depois)</button>
+        <details style="margin-top:12px"><summary style="color:var(--er)">Cancelar sessão</summary><label class="cp">Motivo</label><input type="text" id="motivo" placeholder="Ex.: criança doente, falta, recusa intensa…"><button class="btn perigo bloco" data-a="cancelar">Cancelar sessão</button></details>
+        <button class="btn bloco" data-a="fechar">Voltar</button>`;
+    }
+    return '';
+  }
+
+  /* ------------ sessão encerrada ------------ */
+  function pagVer(sid) {
+    const s = sessao(sid); if (!s) { ir(''); return null; }
+    const p = pacote(s.pacienteId); const st = STATUS[statusVis(s)];
+    cabecalho(esc(p ? p.paciente.nome : 'Sessão'), `${fmtData(s.data)} · ${s.inicio}${s.fim ? '–' + s.fim : ''}`, `<button class="ic" data-a="ir" data-h="${p ? 'p/' + s.pacienteId : ''}" aria-label="Voltar">‹</button>`);
+    const nomeAlvo = id => { for (const x of (p ? p.programas : [])) { const a = x.alvos.find(y => y.id === id); if (a) return x.nome + ' · ' + a.nome; } return '(alvo)'; };
+    let h = `<div class="pad"><span class="chip" style="color:${st[1]}">${st[0]}</span>${s.motivoCancelamento ? ` <span class="mu">Motivo: ${esc(s.motivoCancelamento)}</span>` : ''}</div>`;
+    const al = Object.keys(s.alvos).filter(id => s.alvos[id].tentativas.length);
+    h += `<div class="card"><h2>Tentativas</h2>${al.map(id => { const z = resumo(s.alvos[id].tentativas); return `<div class="reg"><b>${esc(nomeAlvo(id))}</b><br><span class="mu">${z.n} tent. · ${z.pI}% indep. · ${s.alvos[id].tentativas.map(t => t.r === '-' ? '−' : t.r).join(' ')}</span></div>`; }).join('') || '<div class="mu">Nenhuma.</div>'}</div>`;
+    const pr = Object.keys(s.progs).filter(id => s.progs[id].contagem || s.progs[id].duracaoSeg);
+    if (pr.length) h += `<div class="card"><h2>Duração / frequência</h2>${pr.map(id => { const x = p && p.programas.find(y => y.id === id); const r = s.progs[id]; return `<div class="reg"><b>${esc(x ? x.nome : '(programa)')}</b>: ${r.duracaoSeg ? hms(r.duracaoSeg) : ''}${r.contagem ? r.contagem + ' ocorrência(s)' : ''}</div>`; }).join('')}</div>`;
+    if (s.comportamentos.length) h += `<div class="card"><h2>Comportamentos</h2>${s.comportamentos.map(c => `<div class="reg"><b>${c.h} · ${esc(c.nome)}</b>${c.a ? '<br>A: ' + esc(c.a) : ''}${c.b ? '<br>B: ' + esc(c.b) : ''}${c.c ? '<br>C: ' + esc(c.c) : ''}</div>`).join('')}</div>`;
+    h += `<div class="card"><h2>Evolução diária</h2><div class="mu">Engajamento: ${s.engajamento || '—'}/5 · Local: ${esc(s.local || '—')}${s.reforcadores.length ? '<br>Reforçadores: ' + s.reforcadores.map(r => esc(r.nome) + ' (' + r.n + ')').join(', ') : ''}${s.intercorrencias ? '<br>Intercorrências: ' + esc(s.intercorrencias) : ''}</div><p style="white-space:pre-wrap">${esc(s.evolucao || '(sem relato)')}</p></div>`;
+    h += `<div class="pad"><button class="btn bloco" data-a="reabrir" data-s="${s.id}">Reabrir para corrigir</button><button class="btn perigo bloco" data-a="excluir" data-s="${s.id}">Excluir sessão</button></div>`;
+    return h;
+  }
+
+  /* ------------ render ------------ */
+  let timer = null;
+  function render() {
+    const r = rota(); let h;
+    if (r[0] === 'p' && r[1]) h = pagPaciente(r[1]);
+    else if (r[0] === 's' && r[1]) h = pagSessao(r[1]);
+    else if (r[0] === 'v' && r[1]) h = pagVer(r[1]);
+    else h = inicio();
+    if (h == null) return;
+    const mesmo = render.u === location.hash, y = window.scrollY; render.u = location.hash;
+    app.innerHTML = h; window.scrollTo(0, mesmo ? y : 0);
+    document.querySelectorAll('.folha-fundo').forEach(x => x.remove());
+    const s = r[0] === 's' ? sessao(r[1]) : null;
+    if (ui.folha && s) { const f = document.createElement('div'); f.className = 'folha-fundo'; f.innerHTML = `<div class="folha">${folhaHTML(s)}</div>`; f.addEventListener('click', e => { if (e.target === f) { ui.folha = null; render(); } }); document.body.appendChild(f); }
+    clearInterval(timer);
+    if (document.querySelector('[data-dur]')) timer = setInterval(() => { const ss = sessao(rota()[1]); if (!ss) return; document.querySelectorAll('[data-dur]').forEach(el => { const rr = ss.progs[el.dataset.dur]; if (rr) el.textContent = hms(durProg(rr)); }); }, 1000);
+  }
+  function menu() {
+    const f = document.createElement('div'); f.className = 'folha-fundo';
+    f.innerHTML = `<div class="folha"><h3>Menu</h3><button class="btn bloco" data-a="carregar">Abrir pacote do paciente</button><button class="btn bloco" data-a="enviar">Enviar registros ao supervisor</button><button class="btn bloco" data-a="reenviar">Reenviar todas as sessões</button><button class="btn bloco" data-a="trocar-nome">Alterar meu nome${S.at.nome ? ' (' + esc(S.at.nome) + ')' : ''}</button><button class="btn bloco" data-a="fechar-menu">Fechar</button><div class="mu" style="margin-top:12px">Os registros ficam somente neste celular até serem enviados. Não limpe os dados do navegador.</div></div>`;
+    f.addEventListener('click', e => { if (e.target === f || (e.target.dataset && e.target.dataset.a === 'fechar-menu')) f.remove(); else if (e.target.closest('[data-a]')) f.remove(); });
+    document.body.appendChild(f);
+  }
+
+  /* ------------ envio por arquivo ------------ */
+  async function exportar(lista) {
+    if (!lista.length) return toast('Nenhuma sessão para enviar.');
+    const agora = new Date().toISOString();
+    const arq = { tipo: 'ablls-at-registros', versao: 2, geradoEm: agora, at: S.at.nome, sessoes: lista };
+    const nome = `registros_${(S.at.nome || 'AT').split(' ')[0].normalize('NFD').replace(/[^A-Za-z0-9]/g, '')}_${hoje()}_${p2(new Date().getHours())}h${p2(new Date().getMinutes())}.json`;
+    const blob = new Blob([JSON.stringify(arq)], { type: 'application/json' });
+    let feito = false;
+    try { const fl = new File([blob], nome, { type: 'application/json' }); if (navigator.canShare && navigator.canShare({ files: [fl] })) { await navigator.share({ files: [fl], title: 'Registros de sessão' }); feito = true; } }
+    catch (e) { if (e && e.name === 'AbortError') return; }
+    if (!feito) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = nome; document.body.appendChild(a); a.click(); a.remove(); }
+    lista.forEach(s => { s.exportadoEm = agora; }); salvar(); toast(`${lista.length} sessão(ões) no arquivo. Envie ao supervisor.`); render();
+  }
+
+  /* ------------ ações ------------ */
+  const sAtual = () => { const r = rota(); return r[0] === 's' ? sessao(r[1]) : null; };
+  const progPorId = (s, id) => pacote(s.pacienteId).programas.find(x => x.id === id);
+  const A = {
+    ir: el => ir(el.dataset.h), aba: el => { ui.aba = el.dataset.v; render(); }, menu,
+    'salvar-nome': () => { const v = document.getElementById('nome-at').value.trim(); if (!v) return toast('Digite seu nome.'); S.at.nome = v; salvar(); render(); },
+    'trocar-nome': () => { const v = prompt('Seu nome:', S.at.nome); if (v && v.trim()) { S.at.nome = v.trim(); salvar(); render(); } },
+    carregar: () => document.getElementById('arq').click(),
+    enviar: () => exportar(pendentes()),
+    reenviar: () => { const l = S.sessoes.filter(s => s.status === 'finalizada' || s.status === 'cancelada'); if (l.length && confirm(`Gerar um arquivo com todas as ${l.length} sessões encerradas?`)) exportar(l); },
+    'remover-pac': el => { const pid = el.dataset.p; const n = S.sessoes.filter(s => s.pacienteId === pid && (pendentes().includes(s) || s.status === 'em_andamento' || s.status === 'pausada')).length; if (!confirm(n ? `ATENÇÃO: ${n} sessão(ões) deste paciente não foram enviadas e serão PERDIDAS. Remover mesmo assim?` : 'Remover este paciente e suas sessões deste celular?')) return; delete S.pacotes[pid]; S.sessoes = S.sessoes.filter(s => s.pacienteId !== pid); salvar(); ir(''); },
+    nova: el => {
+      if (!S.at.nome) { toast('Informe seu nome na tela inicial.'); return ir(''); }
+      const p = pacote(el.dataset.p);
+      const s = { id: uid(), pacienteId: p.pacienteId, pacoteVersao: p.geradoEm, data: hoje(), inicio: hora(), fim: '', at: S.at.nome, status: 'em_andamento', motivoCancelamento: '', local: '', alvos: {}, progs: {}, comportamentos: [], reforcadores: [], evolucao: '', engajamento: null, intercorrencias: '', criadoEm: new Date().toISOString(), atualizadoEm: new Date().toISOString(), exportadoEm: null };
+      S.sessoes.push(s); salvar(); ui.prog = ''; ui.aberto = null; ir('s/' + s.id);
+    },
+    retomar: el => { const s = sessao(el.dataset.s); s.status = 'em_andamento'; tocar(s); ir('s/' + s.id); },
+    prog: el => { ui.prog = el.dataset.p; render(); },
+    abrir: el => { ui.aberto = ui.aberto === el.dataset.al ? null : el.dataset.al; ui.maisDicas = null; render(); },
+    'mais-dicas': el => { ui.maisDicas = ui.maisDicas === el.dataset.al ? null : el.dataset.al; render(); },
+    t: el => {
+      const s = sAtual(); const x = progPorId(s, el.dataset.p); const al = x.alvos.find(a => a.id === el.dataset.al);
+      const r = regAlvo(s, x, al); r.tentativas.push({ r: el.dataset.r, t: Date.now() }); tocar(s); vib(20);
+      if (x.tentativas && r.tentativas.length === +x.tentativas) toast(`${x.tentativas} tentativas registradas neste alvo.`);
+      render();
+    },
+    desfazer: el => { const s = sAtual(); const r = s.alvos[el.dataset.al]; if (r) r.tentativas.pop(); tocar(s); render(); },
+    crono: el => { const s = sAtual(); const x = progPorId(s, el.dataset.p); const r = regProg(s, x); if (r.cronoIni) { r.intervalos.push({ ini: r.cronoIni, fim: Date.now() }); r.duracaoSeg += (Date.now() - r.cronoIni) / 1000; r.cronoIni = null; } else r.cronoIni = Date.now(); tocar(s); vib(20); render(); },
+    cont: el => { const s = sAtual(); const r = regProg(s, progPorId(s, el.dataset.p)); r.contagem = Math.max(0, r.contagem + (+el.dataset.d)); tocar(s); vib(15); render(); },
+    folha: el => { ui.folha = el.dataset.f; ui.compSel = null; render(); },
+    fechar: () => { ui.folha = null; render(); },
+    'comp-sel': el => { ui.compSel = el.dataset.c; const vals = ['c-a', 'c-b', 'c-c'].map(id => (document.getElementById(id) || {}).value || ''); render(); ['c-a', 'c-b', 'c-c'].forEach((id, i) => { const e = document.getElementById(id); if (e) e.value = vals[i]; }); },
+    int: el => { el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); },
+    'comp-salvar': () => {
+      const s = sAtual(); const p = pacote(s.pacienteId); const v = id => (document.getElementById(id) || {}).value ? document.getElementById(id).value.trim() : '';
+      if (!ui.compSel) return toast('Escolha o comportamento.');
+      const c = ui.compSel === 'outro' ? { id: null, nome: v('c-nome') || 'Outro' } : (p.comportamentos || []).find(x => x.id === ui.compSel);
+      const on = document.querySelector('#c-int button.on');
+      s.comportamentos.push({ id: uid(), compId: c.id, nome: c.nome, h: hora(), a: v('c-a'), b: v('c-b'), c: v('c-c'), intensidade: on ? +on.dataset.n : null });
+      tocar(s); vib(30); toast('Ocorrência registrada.'); ui.compSel = null; render();
+    },
+    'comp-del': el => { const s = sAtual(); s.comportamentos = s.comportamentos.filter(c => c.id !== el.dataset.id); tocar(s); render(); },
+    ref: el => { const s = sAtual(); const r = s.reforcadores.find(x => x.nome === el.dataset.n); if (r) r.n++; else s.reforcadores.push({ nome: el.dataset.n, n: 1 }); tocar(s); vib(15); render(); },
+    'ref-novo': () => { const s = sAtual(); const v = document.getElementById('r-novo').value.trim(); if (!v) return; const r = s.reforcadores.find(x => x.nome === v); if (r) r.n++; else s.reforcadores.push({ nome: v, n: 1 }); tocar(s); render(); },
+    'ref-zerar': () => { const s = sAtual(); s.reforcadores = []; tocar(s); render(); },
+    eng: el => { const s = sAtual(); s.engajamento = +el.dataset.n; tocar(s); el.parentNode.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === el)); },
+    finalizar: () => { const s = sAtual(); pararCronos(s); s.status = 'finalizada'; s.fim = hora(); ui.folha = null; tocar(s); toast('Sessão finalizada. Lembre de enviar.'); ir('p/' + s.pacienteId); },
+    pausar: () => { const s = sAtual(); pararCronos(s); s.status = 'pausada'; ui.folha = null; tocar(s); toast('Sessão pausada.'); ir('p/' + s.pacienteId); },
+    cancelar: () => { const s = sAtual(); const m = document.getElementById('motivo').value.trim(); if (!m) return toast('Informe o motivo do cancelamento.'); pararCronos(s); s.status = 'cancelada'; s.motivoCancelamento = m; s.fim = hora(); ui.folha = null; tocar(s); ir('p/' + s.pacienteId); },
+    reabrir: el => { const s = sessao(el.dataset.s); s.status = 'em_andamento'; tocar(s); ir('s/' + s.id); },
+    excluir: el => { const s = sessao(el.dataset.s); if (!confirm(pendentes().includes(s) ? 'Esta sessão AINDA NÃO FOI ENVIADA. Excluir mesmo assim?' : 'Excluir esta sessão deste celular?')) return; S.sessoes = S.sessoes.filter(x => x !== s); salvar(); ir(pacote(s.pacienteId) ? 'p/' + s.pacienteId : ''); },
+  };
+  function pararCronos(s) { Object.values(s.progs).forEach(r => { if (r.cronoIni) { r.intervalos.push({ ini: r.cronoIni, fim: Date.now() }); r.duracaoSeg += (Date.now() - r.cronoIni) / 1000; r.cronoIni = null; } }); }
+  document.addEventListener('click', e => { const el = e.target.closest('[data-a]'); if (!el) return; const f = A[el.dataset.a]; if (f) { e.preventDefault(); f(el); } });
+  document.addEventListener('input', e => { const t = e.target; if (!t.dataset || !t.dataset.b) return; const s = sAtual(); if (!s) return; s[t.dataset.b] = t.value; tocar(s); });
+  document.getElementById('arq').addEventListener('change', e => {
+    const f = e.target.files[0]; if (!f) return;
+    f.text().then(txt => {
+      try {
+        const d = JSON.parse(txt);
+        if (!d || d.tipo !== 'ablls-at-pacote' || !d.pacienteId || !Array.isArray(d.programas)) throw new Error('Este arquivo não é um pacote de paciente do Sistema ABLLS-R.');
+        const ant = S.pacotes[d.pacienteId];
+        if (ant && ant.geradoEm > d.geradoEm && !confirm('Este pacote é MAIS ANTIGO do que o que já está no celular. Substituir mesmo assim?')) return;
+        S.pacotes[d.pacienteId] = d; salvar(); toast(ant ? 'Pacote atualizado.' : 'Paciente adicionado.'); ir('p/' + d.pacienteId);
+      } catch (err) { alert(err.message || 'Arquivo inválido.'); }
+    }).finally(() => { e.target.value = ''; });
+  });
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) navigator.serviceWorker.register('sw.js').catch(() => {});
+  window.addEventListener('beforeunload', e => { const s = sAtual(); if (s) salvar(); });
+  render();
+})();
+</script>
+</body>
+</html>
