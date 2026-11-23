@@ -167,9 +167,10 @@ textarea { min-height:90px; resize:vertical; }
   function status(s) {
     if (s.estado !== 'finalizada') return ['Em andamento', 'st-and'];
     const r = statusRemoto(s);
-    if (r && r.status === 'ajuste' && !(s.atualizadoEm > (s.exportadoEm || ''))) return ['Ajuste solicitado', 'st-ajuste'];
+    const reenviadaDepois = s.exportadoEm && s.exportadoEm > (P().geradoEm || '') && s.atualizadoEm <= s.exportadoEm; // corrigida e enviada depois do pacote
+    if (r && r.status === 'ajuste' && !reenviadaDepois) return s.atualizadoEm > (s.exportadoEm || '') ? ['Correção não enviada', 'st-nao'] : ['Ajuste solicitado', 'st-ajuste'];
     if (!s.exportadoEm || s.atualizadoEm > s.exportadoEm) return ['Não enviada', 'st-nao'];
-    if (r && r.status === 'revisada') return ['Revisada', 'st-revisada'];
+    if (r && r.status === 'revisada' && !reenviadaDepois) return ['Revisada', 'st-revisada'];
     return ['Aguardando revisão', 'st-revisao'];
   }
   function empil(c, n) { return n ? `<div class="empil">${['I', 'G', 'V', 'A', 'FP', 'FT', 'E'].filter(k => c[k]).map(k => `<i style="width:${c[k] / n * 100}%;background:var(--${k})"></i>`).join('')}</div>` : '<div class="empil"></div>'; }
@@ -197,7 +198,7 @@ textarea { min-height:90px; resize:vertical; }
       const a = apr(g.aprendizId); if (!a) return '';
       const feita = S.sessoes.find(s => s.aprendizId === a.id && s.data === hoje() && s.estado === 'finalizada');
       return `<div class="card"><div class="ag">${g.hora ? `<span class="h">${esc(g.hora)}</span>` : ''}<div style="flex:1"><b>${esc(a.nome)}</b><div class="mu">${g.local ? esc(g.local) + ' · ' : ''}${a.programas.length} programas</div></div></div>
-        ${feita ? `<div class="pill ${status(feita)[1]}" style="font-size:14px;padding:8px 14px">${feita.exportadoEm ? 'Sessão enviada para revisão' : 'Sessão registrada · envie à supervisão'}</div>` : (ab && ab.aprendizId === a.id ? '' : `<button class="btn pri bloco" data-a="iniciar" data-id="${a.id}"${ab ? ' disabled style="opacity:.5"' : ''}>Iniciar sessão</button>`)}</div>`;
+        ${feita ? `<div class="pill ${status(feita)[1]}" style="font-size:14px;padding:8px 14px">${feita.exportadoEm ? 'Sessão enviada para revisão' : 'Sessão registrada · envie à supervisão'}</div>${ab ? '' : `<button class="lnk" data-a="iniciar" data-id="${a.id}" style="display:block;margin-top:6px">Iniciar outra sessão</button>`}` : (ab && ab.aprendizId === a.id ? '' : `<button class="btn pri bloco" data-a="iniciar" data-id="${a.id}"${ab ? ' disabled style="opacity:.5"' : ''}>Iniciar sessão</button>`)}</div>`;
     }).join('');
     const rec = pk.recados || [];
     h += `<div class="rot" style="margin:22px 0 10px">Recados da supervisão</div>` + (rec.length ? rec.slice(0, 8).map(r => `<div class="recado"><b>${esc(r.titulo)}</b><p>${esc(r.texto || '(sem comentário)')}</p></div>`).join('') : '<div class="mu" style="margin-bottom:12px">Nenhum recado por enquanto.</div>');
